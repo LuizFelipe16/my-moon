@@ -1,3 +1,5 @@
-export default function Home() {
-  return <h1>Show</h1>
+import { Login } from "./Login";
+
+export default function LoginApp() {
+  return <Login />
 }
