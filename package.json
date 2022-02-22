@@ -9,9 +9,25 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/core": "^0.8.0",
+    "@chakra-ui/icons": "^1.1.7",
+    "@chakra-ui/react": "^1.8.5",
+    "@emotion/react": "^11.8.1",
+    "@emotion/styled": "^11.8.1",
+    "@types/react-icons": "^3.0.0",
+    "@types/styled-components": "^5.1.23",
+    "axios": "^0.26.0",
+    "faunadb": "^4.5.2",
+    "framer-motion": "^6.2.7",
     "next": "12.1.0",
     "react": "17.0.2",
-    "react-dom": "17.0.2"
+    "react-dom": "17.0.2",
+    "react-hook-form": "^7.27.1",
+    "react-icons": "^4.3.1",
+    "react-query": "^3.34.16",
+    "react-toastify": "^8.2.0",
+    "styled-components": "^5.3.3",
+    "yup": "^0.32.11"
   },
   "devDependencies": {
     "@types/node": "17.0.19",
