@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Flex, Heading, Button, HStack, useToast } from '@chakra-ui/react';
+import { Flex, Heading, Button, HStack, useToast, Text } from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
+import { FaArrowLeft, FaTrash } from 'react-icons/fa';
 
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
@@ -11,11 +12,12 @@ import { Sidebar } from '../../components/Sidebar';
 import { api } from '../../services/api';
 
 import { Container } from "./styles";
+import Link from 'next/link';
 
 interface IItem {
   name: string;
   description: string;
-  status: string;
+  status: boolean;
   type?: string;
   created_at?: string;
 }
@@ -29,8 +31,9 @@ export default function ViewItemList({ item }: IViewItemListProps) {
   const toast = useToast();
   const { data: session } = useSession();
 
-  const [itemId, setItemId] = useState(router?.query?.id)
+  const [itemId, setItemId] = useState(router?.query?.id);
   const [isLoadingWaitingDeleteItem, setIsLoadingWaitingDeleteItem] = useState(false);
+  const [isLoadingWaitingUpdateStatusItem, setIsLoadingWaitingUpdateStatusItem] = useState(false);
 
   async function deleteItem(): Promise<void> {
     setIsLoadingWaitingDeleteItem(true);
@@ -38,20 +41,25 @@ export default function ViewItemList({ item }: IViewItemListProps) {
     await api.delete(`/itemList/${itemId}`).then((response) => {
       setIsLoadingWaitingDeleteItem(false);
       router.push('/Lists');
-      toast({
-        title: response.data.message,
-        status: "success",
-        duration: 5000,
-        isClosable: true,
-      });
+      toast({ title: response.data.message, status: "success", duration: 5000 });
     }).catch((response) => {
-      toast({
-        title: response.data.error,
-        status: "error",
-        duration: 5000,
-        isClosable: true
-      });
+      toast({ title: response.data.error, status: "error", duration: 5000 });
       setIsLoadingWaitingDeleteItem(false);
+    });
+  }
+
+  async function updateStatusItem(): Promise<void> {
+    setIsLoadingWaitingUpdateStatusItem(true);
+
+    await api.put(`/itemList/${itemId}`, {
+      status: !item.status
+    }).then((response) => {
+      setIsLoadingWaitingUpdateStatusItem(false);
+      router.push('/Lists');
+      toast({ title: response.data.message, status: "success", duration: 5000 });
+    }).catch((response) => {
+      toast({ title: response.data.error, status: "error", duration: 5000 });
+      setIsLoadingWaitingUpdateStatusItem(false);
     });
   }
 
@@ -59,9 +67,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
     setItemId(router?.query?.id);
   }, [router?.query?.id])
 
-  if (!session) {
-    return <Loader />
-  }
+  if (!session || !item) return <Loader />
 
   return (
     <>
@@ -75,18 +81,46 @@ export default function ViewItemList({ item }: IViewItemListProps) {
           p="10"
           flexDirection="column"
         >
-          <Heading fontSize="5xl" color="purple.400">{item.name}</Heading>
+          <HStack
+            spacing="4"
+          >
+            <Link href="/Lists" passHref>
+              <Text
+                cursor="pointer"
+                fontSize="lg"
+                transition="0.2s"
+                color="purple.400"
+                _hover={{
+                  color: "gray.700",
+                }}
+              >
+                <FaArrowLeft />
+              </Text>
+            </Link>
+            <Heading fontSize="5xl" color="purple.400">{item.name}</Heading>
+          </HStack>
 
-          <Button
-            isLoading={isLoadingWaitingDeleteItem}
-            onClick={deleteItem}
+          <HStack
+            spacing="4"
             position="absolute"
             top="4rem"
             right="3rem"
-            colorScheme="purple"
           >
-            Deletar
-          </Button>
+            <Button
+              isLoading={isLoadingWaitingUpdateStatusItem}
+              onClick={updateStatusItem}
+              colorScheme={!!item.status ? 'green' : 'red'}
+            >
+              {!!item.status ? 'Completado' : 'Não Completado'}
+            </Button>
+            <Button
+              isLoading={isLoadingWaitingDeleteItem}
+              onClick={deleteItem}
+              colorScheme="purple"
+            >
+              <FaTrash />
+            </Button>
+          </HStack>
 
           <HStack
             w="100%"

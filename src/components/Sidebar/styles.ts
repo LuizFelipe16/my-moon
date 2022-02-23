@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
 export const SidebarComponent = styled.aside`
-  width: 10vw;
+  width: 9vw;
   height: 100%;
-  background: var(--gray-700);
+  background: var(--purple-800);
   position: relative;
   left: 0;
   top: 0;

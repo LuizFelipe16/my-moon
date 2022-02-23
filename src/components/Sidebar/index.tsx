@@ -1,7 +1,7 @@
 import React from 'react';
 import { Avatar, Button, Icon, Tooltip } from "@chakra-ui/react";
 import { signOut } from "next-auth/react";
-import Router from "next/router";
+import { useRouter } from "next/router";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { AiOutlineLogout, AiFillHome, AiFillFolderOpen } from 'react-icons/ai';
@@ -9,10 +9,12 @@ import { AiOutlineLogout, AiFillHome, AiFillFolderOpen } from 'react-icons/ai';
 import { SidebarComponent } from "./styles";
 
 export const Sidebar = () => {
+  const router = useRouter();
+
   async function logout(): Promise<void> {
     await signOut({ redirect: false });
     toast.info("Aguarde alguns instantes.", { icon: "🌙" });
-    Router.push("/");
+    router.push("/");
   }
 
   return (

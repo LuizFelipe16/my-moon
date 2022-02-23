@@ -37,6 +37,34 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
+  if (req.method === 'PUT') {
+    const { id } = req.query;
+    const {
+      status
+    } = req.body;
+
+    try {
+      await fauna.query(
+        q.Update(
+          q.Ref(q.Collection("lists"), id),
+          {
+            data: {
+              status
+            }
+          }
+        )
+      );
+
+      return res.status(200).json({
+        message: 'Item atualizado.'
+      });
+    } catch {
+      return res.status(400).json({
+        error: 'Ocorreu um erro inesperado.'
+      });
+    }
+  }
+
   return res.status(400).json({
     error: 'Method not allowed!'
   });

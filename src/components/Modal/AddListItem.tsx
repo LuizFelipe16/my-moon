@@ -15,14 +15,11 @@ import { ReactNode } from 'react';
 interface IAddListItemProps {
   isOpen: boolean;
   onClose: () => void;
-  onClick: () => void;
 
-  isLoading: boolean;
   children: ReactNode;
 }
 
-export const ModalAddListItem = ({ isOpen, onClose, isLoading = false, children, onClick }: IAddListItemProps) => {
-
+export const ModalAddListItem = ({ isOpen, onClose, children }: IAddListItemProps) => {
   return (
     <>
       <Modal size="2xl" isOpen={isOpen} onClose={onClose}>
@@ -54,14 +51,6 @@ export const ModalAddListItem = ({ isOpen, onClose, isLoading = false, children,
               onClick={onClose}
             >
               Cancelar
-            </Button>
-            <Button
-              isLoading={isLoading}
-              onClick={onClick}
-              colorScheme="purple"
-              ml="4"
-            >
-              Confirmar
             </Button>
           </ModalFooter>
         </ModalContent>

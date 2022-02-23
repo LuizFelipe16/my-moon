@@ -34,7 +34,6 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
       name,
       description,
       status: false,
-      created_at: new Date(),
     }
 
     await fauna.query(
