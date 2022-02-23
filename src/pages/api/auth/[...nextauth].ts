@@ -23,7 +23,7 @@ export default NextAuth({
     },
 
     async signIn({ user, account, profile }) {
-      const { email } = user;
+      const { email, name, image } = user;
 
       try {
         await fauna.query(
@@ -39,7 +39,7 @@ export default NextAuth({
 
             q.Create(
               q.Collection('users'),
-              { data: { email } }
+              { data: { email, name, image } }
             ),
 
             q.Get(
