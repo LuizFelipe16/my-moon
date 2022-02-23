@@ -13,6 +13,8 @@ import { api } from '../../services/api';
 
 import { Container } from "./styles";
 import Link from 'next/link';
+import { queryClient } from '../../services/queryClient';
+import { useMutation } from 'react-query';
 
 interface IItem {
   name: string;
@@ -35,18 +37,26 @@ export default function ViewItemList({ item }: IViewItemListProps) {
   const [isLoadingWaitingDeleteItem, setIsLoadingWaitingDeleteItem] = useState(false);
   const [isLoadingWaitingUpdateStatusItem, setIsLoadingWaitingUpdateStatusItem] = useState(false);
 
-  async function deleteItem(): Promise<void> {
-    setIsLoadingWaitingDeleteItem(true);
-
+  const deleteItemQuery = useMutation(async () => {
     await api.delete(`/itemList/${itemId}`).then((response) => {
       setIsLoadingWaitingDeleteItem(false);
       router.push('/Lists');
       toast({ title: response.data.message, status: "success", duration: 5000 });
-    }).catch((response) => {
-      toast({ title: response.data.error, status: "error", duration: 5000 });
-      setIsLoadingWaitingDeleteItem(false);
     });
-  }
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries('items')
+    },
+    onError: () => {
+      toast({ title: "Ocorreu um erro", status: "error", duration: 5000 });
+      setIsLoadingWaitingDeleteItem(false);
+    }
+  });
+
+  const handleDeleteItem = async () => {
+    setIsLoadingWaitingDeleteItem(true);
+    await deleteItemQuery.mutateAsync();
+  };
 
   async function updateStatusItem(): Promise<void> {
     setIsLoadingWaitingUpdateStatusItem(true);
@@ -115,7 +125,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
             </Button>
             <Button
               isLoading={isLoadingWaitingDeleteItem}
-              onClick={deleteItem}
+              onClick={handleDeleteItem}
               colorScheme="purple"
             >
               <FaTrash />

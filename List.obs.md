@@ -28,3 +28,17 @@ console.log(data);
   //     toast({ title: "Ocorreu um erro inesperado", status: "error", duration: 5000 });
   //   });
   // };
+
+
+  async function deleteItem(): Promise<void> {
+    setIsLoadingWaitingDeleteItem(true);
+
+    await api.delete(`/itemList/${itemId}`).then((response) => {
+      setIsLoadingWaitingDeleteItem(false);
+      router.push('/Lists');
+      toast({ title: response.data.message, status: "success", duration: 5000 });
+    }).catch((response) => {
+      toast({ title: response.data.error, status: "error", duration: 5000 });
+      setIsLoadingWaitingDeleteItem(false);
+    });
+  }

@@ -53,7 +53,8 @@ export default function Lists() {
     });
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('items')
+      queryClient.invalidateQueries('items');
+      reset();
     },
     onError: () => {
       toast({ title: "Ocorreu um erro inesperado", status: "error", duration: 5000 });
@@ -67,7 +68,8 @@ export default function Lists() {
   const {
     register,
     handleSubmit,
-    formState
+    formState,
+    reset
   } = useForm<CreateItemListFormData>({
     resolver: yupResolver(createItemListFormSchema)
   });

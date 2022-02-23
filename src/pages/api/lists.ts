@@ -77,9 +77,7 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
     }
   }
 
-  return res.status(400).json({
-    error: 'Method not allowed!'
-  });
+  return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
 }
 
 export default addItemLists;
