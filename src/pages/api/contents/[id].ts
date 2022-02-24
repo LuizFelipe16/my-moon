@@ -3,9 +3,9 @@ import { query as q } from 'faunadb';
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
-import { fauna } from '../../services/fauna';
+import { fauna } from '../../../services/fauna';
 
-interface ListsQueryResponse {
+interface ContentsQueryResponse {
   after?: {
     id: string;
   };
@@ -13,8 +13,7 @@ interface ListsQueryResponse {
     data: {
       name: string;
       description: string;
-      url: string;
-      seasons: number;
+      date: string;
     };
     ts: number;
     ref: {
@@ -23,45 +22,56 @@ interface ListsQueryResponse {
   }[];
 }
 
-const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
+const ContentsMethods = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
+    const { id } = req.query;
     const session = await getSession({ req });
-    const {
-      name,
-      description,
-      url,
-      seasons,
-      created_at
-    } = req.body;
 
-    const data = {
-      email: session?.user.email,
-      name,
-      description,
-      url,
-      status: false,
-      seasons,
-      created_at
+    if (!session) {
+      return res.status(400).json({
+        error: 'Sua sessão está inativa, faça login novamente para continuar.'
+      });
     }
 
-    await fauna.query(
-      q.Create(
-        q.Collection('lists'),
-        { data }
-      ),
-    );
+    try {
+      const {
+        title,
+        description,
+        date
+      } = req.body;
 
-    return res.status(201).json({ message: 'Item criado com sucesso.' });
+      const data = {
+        email: session?.user.email,
+        list_item_id: id,
+        title,
+        description,
+        date
+      }
+
+      await fauna.query(
+        q.Create(
+          q.Collection('contents'),
+          { data }
+        ),
+      );
+
+      return res.status(201).json({ message: 'Item criado com sucesso.' });
+    } catch (err) {
+      return res.status(400).json({
+        error: 'Um erro inesperado aconteceu. Tente novamente mais tarde.'
+      });
+    }
   }
 
   if (req.method === 'GET') {
+    const { id } = req.query;
     const session = await getSession({ req });
 
     if (session) {
-      return await fauna.query<ListsQueryResponse>(
+      return await fauna.query<ContentsQueryResponse>(
         q.Map(
           q.Paginate(
-            q.Match(q.Index("lists_by_email"), session?.user?.email)
+            q.Match(q.Index("contents_by_list_item_id"), id)
           ),
           q.Lambda("X", q.Get(q.Var("X")))
         )
@@ -88,4 +98,4 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
 }
 
-export default addItemLists;
+export default ContentsMethods;

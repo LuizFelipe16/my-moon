@@ -13,7 +13,7 @@ export function Login() {
   function login(): void {
     setIsLoadingLogin(true);
     signIn('github');
-    toast.info("Login feito com sucesso!", { icon: "🌙" });
+    toast.info("Login feito com sucesso! Aguarde alguns instantes.", { icon: "🌙" });
     setIsLoadingLogin(false);
     return;
   }

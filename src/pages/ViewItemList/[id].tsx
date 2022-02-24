@@ -18,6 +18,8 @@ import { useMutation } from 'react-query';
 import { ModalWarningDeleteListItem } from '../../components/Modal/WarningDeleteListItem';
 import { useCallback } from 'react';
 import { ModalAddContentItem } from '../../components/Modal/AddContentItem';
+import { useContents } from '../../hooks/useContents';
+import { ContentItem } from '../../components/ContentItem';
 
 interface IItem {
   name: string;
@@ -26,6 +28,7 @@ interface IItem {
   status: string;
   id: string;
   created_at?: string;
+  seasons?: number;
 }
 
 interface IViewItemListProps {
@@ -33,16 +36,17 @@ interface IViewItemListProps {
 }
 
 export default function ViewItemList({ item }: IViewItemListProps) {
+  const router = useRouter();
+  const [itemId, setItemId] = useState(String(router?.query?.id));
+
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const toast = useToast();
+  const { data: session } = useSession();
+  const { data, isLoading } = useContents(1, itemId);
 
   const [isModalAddOpen, setIsModalAddOpen] = useState(false);
   const modalAddOnOpenOrClose = () => setIsModalAddOpen(!isModalAddOpen);
 
-  const router = useRouter();
-  const toast = useToast();
-  const { data: session } = useSession();
-
-  const [itemId, setItemId] = useState(router?.query?.id);
   const [isLoadingWaitingDeleteItem, setIsLoadingWaitingDeleteItem] = useState(false);
   const [isLoadingWaitingUpdateStatusItem, setIsLoadingWaitingUpdateStatusItem] = useState(false);
 
@@ -83,10 +87,10 @@ export default function ViewItemList({ item }: IViewItemListProps) {
   }
 
   useEffect(() => {
-    setItemId(router?.query?.id);
+    setItemId(String(router?.query?.id));
   }, [router?.query?.id])
 
-  if (!session || !item) return <Loader />
+  if (!session || !item || !!isLoading) return <Loader />
 
   return (
     <>
@@ -145,7 +149,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
             mt="8"
           >
             <VStack
-              w="18rem"
+              w="17rem"
               h="100%"
               p="5"
               borderRadius="lg"
@@ -154,7 +158,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
               <Image
                 src={item.url}
                 w="100%"
-                h="17rem"
+                h="19rem"
                 borderRadius="lg"
                 objectFit="cover"
               />
@@ -167,6 +171,15 @@ export default function ViewItemList({ item }: IViewItemListProps) {
               >
                 {item.description}
               </Text>
+              <Text
+                w="100%"
+                p="2"
+                align="center"
+                borderRadius="lg"
+                bgColor="purple.500"
+              >
+                Temporadas {item.seasons}
+              </Text>
               <Button
                 w="100%"
                 isLoading={isLoadingWaitingUpdateStatusItem}
@@ -176,11 +189,26 @@ export default function ViewItemList({ item }: IViewItemListProps) {
                 {!!item.status ? 'Completado' : 'Não Completado'}
               </Button>
             </VStack>
+
+            <VStack
+              flex={1}
+              h="100%"
+              mt="6"
+              borderColor="purple.400"
+              borderTopWidth="thin"
+              overflowX="hidden"
+              overflowY="scroll"
+              align="center"
+              justify="flex-start"
+            >
+              {data?.contents.map(content => <ContentItem content={content} />)}
+            </VStack>
           </HStack>
         </Flex>
       </Container>
 
       <ModalAddContentItem
+        id={itemId}
         isOpen={isModalAddOpen}
         onClose={modalAddOnOpenOrClose}
       />

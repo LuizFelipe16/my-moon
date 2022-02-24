@@ -8,6 +8,7 @@ type ListItem = {
   status: string;
   id: string;
   created_at?: string;
+  seasons?: number;
 }
 
 type GetListItemsResponse = {
