@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const ListItemStyled = styled.div`
     width: 16rem;
-    height: 24rem;
+    height: 25rem;
     background: var(--purple-500);
     border-radius: 0.5rem;
     padding: 0.5rem;
@@ -43,11 +43,12 @@ export const ListItemStyled = styled.div`
     }
 
     h1 {
-      font-size: 1.4rem;
+      font-size: 1.3rem;
     }
 
     p {
       font-size: 1rem;
+      font-weight: 300;
     }
 
     button {

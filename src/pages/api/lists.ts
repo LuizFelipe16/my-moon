@@ -13,6 +13,7 @@ interface ListsQueryResponse {
     data: {
       name: string;
       description: string;
+      url: string;
     };
     ts: number;
     ref: {
@@ -26,14 +27,18 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
     const {
       name,
-      description
+      description,
+      url,
+      created_at
     } = req.body;
 
     const data = {
       email: session?.user.email,
       name,
       description,
+      url,
       status: false,
+      created_at
     }
 
     await fauna.query(

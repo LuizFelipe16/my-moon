@@ -18,6 +18,7 @@ import { api } from '../../services/api';
 import { Container } from "./styles";
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
+import { FileInput } from '../../components/Form/FileInput';
 
 interface IListItem {
   email: string;
@@ -30,13 +31,14 @@ interface IListItem {
 }
 
 type CreateItemListFormData = {
+  image: any;
   name: string;
   description: string;
 }
 
 const createItemListFormSchema = validate.object().shape({
-  name: validate.string().required("Nome é obrigatório").min(3, 'Mínimo 3 caracteres'),
-  description: validate.string().required("Descrição é obrigatória").min(6, 'Mínimo 6 caracteres')
+  name: validate.string().required("Nome é obrigatório").min(2, 'Mínimo 3 caracteres'),
+  description: validate.string().required("Descrição é obrigatória").min(3, 'Mínimo 6 caracteres')
 });
 
 export default function Lists() {
@@ -44,17 +46,25 @@ export default function Lists() {
   const { data: session } = useSession();
   const toast = useToast();
 
-  const [page, setPage] = useState(1);
-  const { data, isLoading, error, isFetching } = useItems(page);
+  const [imageUrl, setImageUrl] = useState('');
+  const [localImageUrl, setLocalImageUrl] = useState('');
+
+  const { data, isLoading, error, isFetching } = useItems(1);
 
   const createItem = useMutation(async (item: CreateItemListFormData) => {
-    await api.post("/lists", item).then((response) => {
+    await api.post("/lists", {
+      ...item,
+      url: imageUrl,
+      created_at: new Date()
+    }).then((response) => {
       toast({ title: response.data.message, status: "success", duration: 5000 });
     });
   }, {
     onSuccess: () => {
       queryClient.invalidateQueries('items');
       reset();
+      setLocalImageUrl('');
+      setImageUrl('');
     },
     onError: () => {
       toast({ title: "Ocorreu um erro inesperado", status: "error", duration: 5000 });
@@ -62,6 +72,17 @@ export default function Lists() {
   });
 
   const handleCreateNewItemList: SubmitHandler<CreateItemListFormData> = async (values) => {
+    if (!imageUrl) {
+      toast({
+        title: 'Imagem não adicionada',
+        description: 'É preciso adicionar e aguardar o upload de uma imagem antes de realizar o cadastro.',
+        status: 'info',
+        duration: 5000,
+        isClosable: true,
+      });
+      return;
+    }
+
     await createItem.mutateAsync(values);
   };
 
@@ -80,7 +101,7 @@ export default function Lists() {
 
   return (
     <>
-      <Head><title>Dashboard | MyMoon</title></Head>
+      <Head><title>Listas | MyMoon</title></Head>
       <Container>
         <Sidebar />
 
@@ -119,6 +140,14 @@ export default function Lists() {
         onClose={onClose}
       >
         <VStack as="form" spacing="4" onSubmit={handleSubmit(handleCreateNewItemList)}>
+          <FileInput
+            is="image"
+            setImageUrl={setImageUrl}
+            localImageUrl={localImageUrl}
+            setLocalImageUrl={setLocalImageUrl}
+            error={errors.image}
+            {...register('image')}
+          />
           <Input
             is="name"
             label="Nome"

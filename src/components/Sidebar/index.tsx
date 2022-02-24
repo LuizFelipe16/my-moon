@@ -19,12 +19,12 @@ export const Sidebar = () => {
 
   return (
     <SidebarComponent>
-      <Avatar
+      {/* <Avatar
         position="absolute"
         top="2rem"
         size="lg"
         src="/icon.png"
-      />
+      /> */}
 
       <Link href="/Dashboard">
         <a className="route">

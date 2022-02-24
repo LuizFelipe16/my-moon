@@ -1,7 +1,8 @@
-import { Flex, Heading, Text, SimpleGrid, Box } from '@chakra-ui/react';
+import { Flex, Heading, Text, SimpleGrid, Box, HStack, Icon } from '@chakra-ui/react';
 import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import { GiDisc } from 'react-icons/gi';
 
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
@@ -9,6 +10,7 @@ import { Sidebar } from '../../components/Sidebar';
 import { optionsChart } from '../../configs/Charts';
 
 import { Container } from "./styles";
+import { useItems } from '../../hooks/useItems';
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
@@ -21,7 +23,9 @@ const series1 = [
 export default function Dashboard() {
   const { data: session } = useSession();
 
-  if (!session) return <Loader />
+  const { data, isLoading } = useItems(1);
+
+  if (!session || !!isLoading) return <Loader />
 
   return (
     <>
@@ -46,6 +50,20 @@ export default function Dashboard() {
             >
               <Text color="purple.500" fontSize="lg" mb="4">Sessões da Semana</Text>
               <Chart options={optionsChart} series={series1} type="area" height={160} />
+            </Box>
+            <Box
+              w="60%"
+              p={["5", "8"]}
+              bg="gray.800"
+              borderRadius={8}
+            >
+              <Text color="purple.500" fontSize="lg" mb="4">Sessões Criadas</Text>
+              <HStack fontFamily="Roboto" flex="1" align="center" justify="space-between">
+                <Text color="purple.500" fontSize="8xl" fontWeight="bold">
+                  {data?.totalCount}
+                </Text>
+                <Icon color="purple.500" fontSize="9xl" as={GiDisc} />
+              </HStack>
             </Box>
           </SimpleGrid>
         </Flex>

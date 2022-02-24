@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Flex, Heading, Button, HStack, useToast, Text } from '@chakra-ui/react';
+import { Flex, Heading, Button, HStack, useToast, Text, VStack, Image, Icon, useDisclosure } from '@chakra-ui/react';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
-import { FaArrowLeft, FaTrash } from 'react-icons/fa';
+import { FaArrowLeft, FaPlus, FaTrash } from 'react-icons/fa';
 
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
@@ -15,12 +15,16 @@ import { Container } from "./styles";
 import Link from 'next/link';
 import { queryClient } from '../../services/queryClient';
 import { useMutation } from 'react-query';
+import { ModalWarningDeleteListItem } from '../../components/Modal/WarningDeleteListItem';
+import { useCallback } from 'react';
+import { ModalAddContentItem } from '../../components/Modal/AddContentItem';
 
 interface IItem {
   name: string;
   description: string;
-  status: boolean;
-  type?: string;
+  url: string;
+  status: string;
+  id: string;
   created_at?: string;
 }
 
@@ -29,6 +33,11 @@ interface IViewItemListProps {
 }
 
 export default function ViewItemList({ item }: IViewItemListProps) {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
+  const [isModalAddOpen, setIsModalAddOpen] = useState(false);
+  const modalAddOnOpenOrClose = () => setIsModalAddOpen(!isModalAddOpen);
+
   const router = useRouter();
   const toast = useToast();
   const { data: session } = useSession();
@@ -53,10 +62,10 @@ export default function ViewItemList({ item }: IViewItemListProps) {
     }
   });
 
-  const handleDeleteItem = async () => {
+  const handleDeleteItem = useCallback(async () => {
     setIsLoadingWaitingDeleteItem(true);
     await deleteItemQuery.mutateAsync();
-  };
+  }, []);
 
   async function updateStatusItem(): Promise<void> {
     setIsLoadingWaitingUpdateStatusItem(true);
@@ -81,7 +90,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
 
   return (
     <>
-      <Head><title>{item.description} | MyMoon</title></Head>
+      <Head><title>{item.name} | MyMoon</title></Head>
       <Container>
         <Sidebar />
 
@@ -117,32 +126,71 @@ export default function ViewItemList({ item }: IViewItemListProps) {
             right="3rem"
           >
             <Button
-              isLoading={isLoadingWaitingUpdateStatusItem}
-              onClick={updateStatusItem}
-              colorScheme={!!item.status ? 'green' : 'red'}
-            >
-              {!!item.status ? 'Completado' : 'Não Completado'}
-            </Button>
-            <Button
-              isLoading={isLoadingWaitingDeleteItem}
-              onClick={handleDeleteItem}
+              onClick={() => onOpen()}
               colorScheme="purple"
             >
-              <FaTrash />
+              <Icon as={FaTrash} />
+            </Button>
+            <Button
+              onClick={modalAddOnOpenOrClose}
+              colorScheme="purple"
+            >
+              <Icon as={FaPlus} />
             </Button>
           </HStack>
 
           <HStack
             w="100%"
-            h="auto"
-            mt="6"
-            flexWrap="wrap"
-            overflowX="scroll"
+            h="100%"
+            mt="8"
           >
-
+            <VStack
+              w="18rem"
+              h="100%"
+              p="5"
+              borderRadius="lg"
+              bgColor="gray.700"
+            >
+              <Image
+                src={item.url}
+                w="100%"
+                h="17rem"
+                borderRadius="lg"
+                objectFit="cover"
+              />
+              <Text
+                w="100%"
+                p="2"
+                align="center"
+                borderRadius="lg"
+                bgColor="purple.500"
+              >
+                {item.description}
+              </Text>
+              <Button
+                w="100%"
+                isLoading={isLoadingWaitingUpdateStatusItem}
+                onClick={updateStatusItem}
+                colorScheme={!!item.status ? 'green' : 'red'}
+              >
+                {!!item.status ? 'Completado' : 'Não Completado'}
+              </Button>
+            </VStack>
           </HStack>
         </Flex>
       </Container>
+
+      <ModalAddContentItem
+        isOpen={isModalAddOpen}
+        onClose={modalAddOnOpenOrClose}
+      />
+
+      <ModalWarningDeleteListItem
+        isOpen={isOpen}
+        onClose={onClose}
+        isLoading={isLoadingWaitingDeleteItem}
+        onDeleteItem={handleDeleteItem}
+      />
     </>
   );
 }

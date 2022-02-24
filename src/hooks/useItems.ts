@@ -2,12 +2,12 @@ import { useQuery } from "react-query";
 import { api } from "../services/api";
 
 type ListItem = {
-  email: string;
   name: string;
   description: string;
-  status?: string;
-  // type?: string;
+  url: string;
+  status: string;
   id: string;
+  created_at?: string;
 }
 
 type GetListItemsResponse = {
@@ -22,10 +22,10 @@ export async function getListItems(page: number): Promise<GetListItemsResponse> 
     }
   });
 
-
-  const totalCount = Number(headers['x-total-count']);
+  // const totalCount = Number(headers['x-total-count']);
 
   const lists: ListItem[] = data.data;
+  const totalCount = lists.length;
 
   return {
     items: lists,

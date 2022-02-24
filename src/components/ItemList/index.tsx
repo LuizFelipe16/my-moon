@@ -1,22 +1,23 @@
+import { memo } from 'react';
 import Link from "next/link";
 import { ListItemStyled } from "./styles";
 
 interface IItemList {
   item: {
-    email: string;
     name: string;
     description: string;
-    status?: string;
-    // type?: string;
+    url: string;
+    status: string;
     id: string;
+    created_at?: string;
   }
 }
 
-export const ItemList = ({ item }: IItemList) => {
+function ItemListComponent({ item }: IItemList) {
   return (
     <ListItemStyled>
       <div className={`list_item_image`}>
-        <img src="/capa.jpg" alt={`Capa ${item.name}`} />
+        <img src={!item.url ? "/capa.jpg" : item.url} alt={`Capa ${item.name}`} />
       </div>
 
       <div>
@@ -32,3 +33,7 @@ export const ItemList = ({ item }: IItemList) => {
     </ListItemStyled>
   );
 }
+
+export const ItemList = memo(ItemListComponent, (prevProps, nextProps) => {
+  return Object.is(prevProps.item, nextProps.item);
+});

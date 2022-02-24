@@ -19,27 +19,27 @@ export const SidebarComponent = styled.aside`
   .route {
     width: auto;
     height: auto;
-    padding: 1.5rem;
-
-    background: var(--gray-900);
+    
+    font-size: 1.5rem;
     color: var(--gray-100);
+    
+    background: var(--gray-900);
+    cursor: pointer;
     border-radius: 50%;
+    padding: 1.5rem;
  
     display: flex;
     flex-direction: row;
     align-items: center;
     justify-content: center;
     gap: 0.35rem;
-
-    font-size: 1.5rem;
     
     transition: 0.2s;
-    cursor: pointer;
-
+    
     &:hover {
-      background: var(--purple-500);
       color: var(--gray-100);
+      box-shadow: rgba(0, 0, 0, 0.19) 0px 10px 20px, rgba(0, 0, 0, 0.23) 0px 6px 6px;
+      background: var(--purple-500);
     }
   }
-
 `;
