@@ -28,7 +28,8 @@ interface IItem {
   status: string;
   id: string;
   created_at?: string;
-  seasons?: number;
+  seasons: number;
+  seasons_formatted: Array<number>;
 }
 
 interface IViewItemListProps {
@@ -192,16 +193,32 @@ export default function ViewItemList({ item }: IViewItemListProps) {
 
             <VStack
               flex={1}
-              h="100%"
+              h="31rem"
               mt="6"
+              pr="4"
               borderColor="purple.400"
               borderTopWidth="thin"
-              overflowX="hidden"
-              overflowY="scroll"
+              borderBottomWidth="thin"
               align="center"
               justify="flex-start"
+              overflowX="scroll"
             >
-              {data?.contents.map(content => <ContentItem content={content} />)}
+              <br />
+              {item.seasons_formatted.map(s => {
+                return (
+                  <>
+                    <Text alignSelf="flex-start" color="gray.600">{s}º Temporada </Text>
+                    {data?.contents.map(content => {
+                      if (content.season === s) {
+                        return (
+                          <ContentItem content={content} />
+                        )
+                      }
+                    })}
+                    <br />
+                  </>
+                )
+              })}
             </VStack>
           </HStack>
         </Flex>
@@ -211,6 +228,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
         id={itemId}
         isOpen={isModalAddOpen}
         onClose={modalAddOnOpenOrClose}
+        seasons={item.seasons_formatted}
       />
 
       <ModalWarningDeleteListItem
@@ -238,9 +256,24 @@ export const getStaticProps: GetStaticProps = async ({ params }) => {
 
   const item: IItem = data.item.data;
 
+  const seasons_formatted = [];
+
+  for (let i = 1; i <= item.seasons; i++) {
+    seasons_formatted.push(i);
+  }
+
+  const formatted = {
+    name: item.name,
+    description: item.description,
+    url: item.url,
+    status: item.status,
+    seasons: item.seasons,
+    seasons_formatted: seasons_formatted
+  }
+
   return {
     props: {
-      item
+      item: formatted
     }
   }
 };

@@ -1,14 +1,23 @@
 import { useQuery } from "react-query";
 import { api } from "../services/api";
 
+type DataListItem = {
+  name: string;
+  description: string;
+  url: string;
+  status: string;
+  id: string;
+  seasons: number;
+}
+
 type ListItem = {
   name: string;
   description: string;
   url: string;
   status: string;
   id: string;
-  created_at?: string;
-  seasons?: number;
+  seasons: number;
+  seasons_formatted: Array<number>;
 }
 
 type GetListItemsResponse = {
@@ -25,11 +34,29 @@ export async function getListItems(page: number): Promise<GetListItemsResponse> 
 
   // const totalCount = Number(headers['x-total-count']);
 
-  const lists: ListItem[] = data.data;
+  const lists: DataListItem[] = data.data;
   const totalCount = lists.length;
 
+  const items = lists.map(item => {
+    const seasons_formatted = [];
+
+    for (let i = 1; i <= item.seasons; i++) {
+      seasons_formatted.push(i);
+    }
+
+    return {
+      id: item.id,
+      name: item.name,
+      description: item.description,
+      url: item.url,
+      status: item.status,
+      seasons: item.seasons,
+      seasons_formatted: seasons_formatted
+    }
+  });
+
   return {
-    items: lists,
+    items: items,
     totalCount
   };
 }

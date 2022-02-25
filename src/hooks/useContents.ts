@@ -7,8 +7,9 @@ type ContentItem = {
   title: string;
   description: string;
   date: string;
-  date_formatted?: string;
+  date_formatted: string;
   id: string;
+  season: number;
 }
 
 type GetContentItemsResponse = {
@@ -42,7 +43,8 @@ export async function getContentItems({ page, id }: getContentItemsProps): Promi
       new Date(item.date),
       "dd 'de' MMM',' yyyy",
       { locale: ptBR }
-    )
+    ),
+    season: Number(item.season),
   }));
 
   return {
@@ -52,7 +54,7 @@ export async function getContentItems({ page, id }: getContentItemsProps): Promi
 }
 
 export function useContents(page: number, id: string) {
-  return useQuery(['content-items', page], () => getContentItems({ page, id }), {
+  return useQuery([`content-items-${id}`, page], () => getContentItems({ page, id }), {
     staleTime: 1000 * 60 * 10, // 10 min
   });
 }

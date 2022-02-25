@@ -16,27 +16,32 @@ import { Input } from '../Form/Input';
 import { useMutation } from 'react-query';
 import { queryClient } from '../../services/queryClient';
 import { api } from '../../services/api';
+import { SelectInput } from '../Form/SelectInput';
+import { OptionSelect } from '../utils/OptionSelect';
 
 interface IAddContentItemProps {
   isOpen: boolean;
   onClose: () => void;
 
   id: string;
+  seasons: Array<number>;
 }
 
 type CreateContentItemFormData = {
   title: string;
   description: string;
   date: string;
+  season: number;
 }
 
 const createContentItemFormSchema = validateYup.object().shape({
   title: validateYup.string().required("Título é obrigatório").min(2, 'Mínimo 2 caracteres'),
   description: validateYup.string().required("Descrição é obrigatória").min(3, 'Mínimo 3 caracteres'),
+  season: validateYup.number().required("Temporada é obrigatória"),
   date: validateYup.date().required('Data é obrigatória')
 });
 
-export const ModalAddContentItem = ({ isOpen, onClose, id }: IAddContentItemProps) => {
+export const ModalAddContentItem = ({ isOpen, onClose, id, seasons }: IAddContentItemProps) => {
   const toast = useToast();
   const {
     register,
@@ -55,7 +60,7 @@ export const ModalAddContentItem = ({ isOpen, onClose, id }: IAddContentItemProp
     }).then((response) => toast({ title: response.data.message, status: "success", duration: 5000 }));
   }, {
     onSuccess: () => {
-      queryClient.invalidateQueries('content-items');
+      queryClient.invalidateQueries(`content-items-${id}`);
       reset();
     }
   });
@@ -96,6 +101,14 @@ export const ModalAddContentItem = ({ isOpen, onClose, id }: IAddContentItemProp
                 error={errors.date}
                 {...register('date')}
               />
+              <SelectInput
+                is="season"
+                label="Temporada"
+                error={errors.season}
+                {...register('season')}
+              >
+                {seasons?.map(s => <OptionSelect key={s} v={s} />)}
+              </SelectInput>
               <Button
                 w="100%"
                 type="submit"

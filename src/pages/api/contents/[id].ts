@@ -14,6 +14,7 @@ interface ContentsQueryResponse {
       name: string;
       description: string;
       date: string;
+      season: string;
     };
     ts: number;
     ref: {
@@ -37,7 +38,8 @@ const ContentsMethods = async (req: NextApiRequest, res: NextApiResponse) => {
       const {
         title,
         description,
-        date
+        date,
+        season
       } = req.body;
 
       const data = {
@@ -45,7 +47,8 @@ const ContentsMethods = async (req: NextApiRequest, res: NextApiResponse) => {
         list_item_id: id,
         title,
         description,
-        date
+        date,
+        season
       }
 
       await fauna.query(
