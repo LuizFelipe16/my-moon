@@ -22,6 +22,8 @@ type ListItem = {
 
 type GetListItemsResponse = {
   totalCount: number;
+  totalCountCompleted: number;
+  totalCountNotCompleted: number;
   items: ListItem[];
 }
 
@@ -37,12 +39,18 @@ export async function getListItems(page: number): Promise<GetListItemsResponse> 
   const lists: DataListItem[] = data.data;
   const totalCount = lists.length;
 
+  let totalCountCompleted = 0;
+  let totalCountNotCompleted = 0;
+
   const items = lists.map(item => {
     const seasons_formatted = [];
 
     for (let i = 1; i <= item.seasons; i++) {
       seasons_formatted.push(i);
     }
+
+    if (Boolean(item.status) === true) totalCountCompleted++
+    else totalCountNotCompleted++
 
     return {
       id: item.id,
@@ -57,7 +65,9 @@ export async function getListItems(page: number): Promise<GetListItemsResponse> 
 
   return {
     items: items,
-    totalCount
+    totalCount,
+    totalCountCompleted,
+    totalCountNotCompleted
   };
 }
 

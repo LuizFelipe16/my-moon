@@ -18,6 +18,7 @@ import { queryClient } from '../../services/queryClient';
 import { api } from '../../services/api';
 import { SelectInput } from '../Form/SelectInput';
 import { OptionSelect } from '../utils/OptionSelect';
+import { ButtonCancel } from './ButtonCancel';
 
 interface IAddContentItemProps {
   isOpen: boolean;
@@ -121,27 +122,7 @@ export const ModalAddContentItem = ({ isOpen, onClose, id, seasons }: IAddConten
           </ModalBody>
 
           <ModalFooter>
-            <Button
-              bg="gray.900"
-              borderRadius="0.26rem"
-              borderWidth="0.12rem"
-              borderColor="purple.500"
-
-              color="purple.500"
-              fontSize="md"
-              fontWeight="bold"
-
-              transition="0.2s"
-
-              _hover={{
-                color: 'gray.100',
-                bg: 'purple.500'
-              }}
-
-              onClick={onClose}
-            >
-              Cancelar
-            </Button>
+            <ButtonCancel onClose={onClose} />
           </ModalFooter>
         </ModalContent>
       </Modal>

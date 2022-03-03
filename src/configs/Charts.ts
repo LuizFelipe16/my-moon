@@ -27,8 +27,8 @@ export const optionsChart = {
       color: theme.colors.purple[600]
     },
     categories: [
-      'Assistidos',
-      'Não Assistidos'
+      'Completados',
+      'Não Completados'
     ],
   },
   fill: {

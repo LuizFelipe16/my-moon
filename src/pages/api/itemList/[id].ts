@@ -3,7 +3,7 @@ import { query as q } from 'faunadb';
 
 import { fauna } from '../../../services/fauna';
 
-const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
+const MethodsItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'GET') {
     const { id } = req.query;
 
@@ -68,4 +68,4 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
 }
 
-export default addItemLists;
+export default MethodsItemLists;

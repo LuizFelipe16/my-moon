@@ -28,11 +28,11 @@ export const ModalWarningDeleteListItem = ({ isOpen, onClose, onDeleteItem, isLo
           <ModalBody>
             <Text fontSize="xl">Deseja deletar esse item permanentemente?</Text>
             <Button
-              size="sm"
+              size="md"
               mt="4"
               w="100%"
               isLoading={isLoading}
-              colorScheme="purple"
+              colorScheme="red"
               onClick={onDeleteItem}
             >
               Sim

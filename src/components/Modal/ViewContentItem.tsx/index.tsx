@@ -11,8 +11,14 @@ import {
   Input,
   VStack,
   Icon,
+  useToast,
 } from '@chakra-ui/react';
+import { useState } from 'react';
 import { FaTrash } from 'react-icons/fa';
+import { useMutation } from 'react-query';
+import { api } from '../../../services/api';
+import { queryClient } from '../../../services/queryClient';
+import { ButtonCancel } from '../ButtonCancel';
 
 type ContentItem = {
   title: string;
@@ -27,6 +33,7 @@ interface IViewContentItemProps {
   isOpen: boolean;
   onClose: () => void;
 
+  list_id: string;
   item: ContentItem;
 }
 
@@ -34,9 +41,34 @@ export const ModalViewContentItem = (
   {
     isOpen,
     onClose,
-    item
+    item,
+    list_id
   }: IViewContentItemProps
 ) => {
+  const toast = useToast();
+  const [isLoadingDeleteContentItem, setIsLoadingDeleteContentItem] = useState(false);
+
+  const deleteContentItem = useMutation(async (id: string) => {
+    await api.delete(`/contents/item/${id}`)
+      .then(response => {
+        setIsLoadingDeleteContentItem(false);
+        toast({ title: response.data.message, status: "success", duration: 5000 });
+      })
+      .catch(err => {
+        toast({ title: 'Ocorreu um erro inesperado.', status: "error", duration: 5000 });
+      });
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`content-items-${list_id}`);
+      onClose();
+    }
+  });
+
+  async function handleDeleteContentItem(id: string) {
+    setIsLoadingDeleteContentItem(true);
+    await deleteContentItem.mutateAsync(id);
+  }
+
   return (
     <>
       <Modal isCentered size="xl" isOpen={isOpen} onClose={onClose} >
@@ -85,30 +117,12 @@ export const ModalViewContentItem = (
             <Button
               colorScheme="purple"
               mr="2"
+              isLoading={isLoadingDeleteContentItem}
+              onClick={() => handleDeleteContentItem(item.id)}
             >
               <Icon as={FaTrash} />
             </Button>
-            <Button
-              bg="gray.900"
-              borderRadius="0.26rem"
-              borderWidth="0.12rem"
-              borderColor="purple.500"
-
-              color="purple.500"
-              fontSize="md"
-              fontWeight="bold"
-
-              transition="0.2s"
-
-              _hover={{
-                color: 'gray.100',
-                bg: 'purple.500'
-              }}
-
-              onClick={onClose}
-            >
-              Fechar
-            </Button>
+            <ButtonCancel onClose={onClose} text="Fechar" />
           </ModalFooter>
         </ModalContent>
       </Modal>

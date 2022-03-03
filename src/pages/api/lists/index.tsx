@@ -3,7 +3,7 @@ import { query as q } from 'faunadb';
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
 
-import { fauna } from '../../services/fauna';
+import { fauna } from '../../../services/fauna';
 
 interface ListsQueryResponse {
   after?: {
@@ -23,7 +23,7 @@ interface ListsQueryResponse {
   }[];
 }
 
-const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
+const MethodsLists = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const session = await getSession({ req });
     const {
@@ -88,4 +88,4 @@ const addItemLists = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
 }
 
-export default addItemLists;
+export default MethodsLists;

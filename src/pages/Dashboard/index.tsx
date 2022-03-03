@@ -3,6 +3,7 @@ import dynamic from 'next/dynamic';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
 import { GiDisc } from 'react-icons/gi';
+import { GiSandsOfTime } from 'react-icons/gi';
 
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
@@ -11,21 +12,25 @@ import { optionsChart } from '../../configs/Charts';
 
 import { Container } from "./styles";
 import { useItems } from '../../hooks/useItems';
+import { useTimers } from '../../hooks/useTimers';
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,
 });
 
-const series1 = [
-  { name: 'data1', data: [4, 1] }
-];
-
 export default function Dashboard() {
   const { data: session } = useSession();
 
   const { data, isLoading } = useItems(1);
+  const { data: dataTime, isLoading: isLoadingTimers } = useTimers(1);
 
-  if (!session || !!isLoading) return <Loader />
+  const totalCountCompleted = data?.totalCountCompleted;
+  const totalCountNotCompleted = data?.totalCountNotCompleted;
+  const series1 = [
+    { name: 'data1', data: [Number(totalCountCompleted), Number(totalCountNotCompleted)] }
+  ];
+
+  if (!session || !!isLoading || !!isLoadingTimers) return <Loader />
 
   return (
     <>
@@ -47,22 +52,46 @@ export default function Dashboard() {
               p={["5", "8"]}
               bg="gray.800"
               borderRadius={8}
+              transition=".2s"
+              _hover={{
+                boxShadow: 'lg'
+              }}
             >
               <Text color="purple.500" fontSize="lg" mb="4">Sessões da Semana</Text>
               <Chart options={optionsChart} series={series1} type="area" height={160} />
             </Box>
             <Box
-              w="60%"
               p={["5", "8"]}
               bg="gray.800"
               borderRadius={8}
+              transition=".2s"
+              _hover={{
+                boxShadow: 'lg'
+              }}
             >
-              <Text color="purple.500" fontSize="lg" mb="4">Sessões Criadas</Text>
+              <Text color="purple.500" fontSize="lg" mb="4">Listas Criadas</Text>
               <HStack fontFamily="Roboto" flex="1" align="center" justify="space-between">
                 <Text color="purple.500" fontSize="8xl" fontWeight="bold">
                   {data?.totalCount}
                 </Text>
                 <Icon color="purple.500" fontSize="9xl" as={GiDisc} />
+              </HStack>
+            </Box>
+            <Box
+              p={["5", "8"]}
+              bg="gray.800"
+              borderRadius={8}
+              transition=".2s"
+              _hover={{
+                boxShadow: 'lg'
+              }}
+            >
+              <Text color="purple.500" fontSize="lg" mb="4">Timers Criados</Text>
+              <HStack fontFamily="Roboto" flex="1" align="center" justify="space-between">
+                <Text color="purple.500" fontSize="8xl" fontWeight="bold">
+                  {dataTime?.totalCount}
+                </Text>
+                <Icon color="purple.500" fontSize="9xl" as={GiSandsOfTime} />
               </HStack>
             </Box>
           </SimpleGrid>

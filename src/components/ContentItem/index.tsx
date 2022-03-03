@@ -13,10 +13,11 @@ type IContentItem = {
 }
 
 interface ContentItemComponentProps {
+  list_id: string;
   content: IContentItem;
 }
 
-function ContentItemComponent({ content }: ContentItemComponentProps) {
+function ContentItemComponent({ content, list_id }: ContentItemComponentProps) {
   const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
@@ -48,6 +49,7 @@ function ContentItemComponent({ content }: ContentItemComponentProps) {
       </Flex>
 
       <ModalViewContentItem
+        list_id={list_id}
         item={content}
         isOpen={isOpen}
         onClose={onClose}

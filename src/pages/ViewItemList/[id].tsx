@@ -196,9 +196,8 @@ export default function ViewItemList({ item }: IViewItemListProps) {
               h="31rem"
               mt="6"
               pr="4"
-              borderColor="purple.400"
+              borderColor="purple.500"
               borderTopWidth="thin"
-              borderBottomWidth="thin"
               align="center"
               justify="flex-start"
               overflowX="scroll"
@@ -211,7 +210,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
                     {data?.contents.map(content => {
                       if (content.season === s) {
                         return (
-                          <ContentItem content={content} />
+                          <ContentItem list_id={itemId} content={content} />
                         )
                       }
                     })}

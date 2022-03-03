@@ -5,7 +5,7 @@ import { getSession } from "next-auth/react";
 
 import { fauna } from '../../../services/fauna';
 
-interface ContentsQueryResponse {
+interface TimersQueryResponse {
   after?: {
     id: string;
   };
@@ -13,8 +13,6 @@ interface ContentsQueryResponse {
     data: {
       name: string;
       description: string;
-      date: string;
-      season: string;
     };
     ts: number;
     ref: {
@@ -23,58 +21,41 @@ interface ContentsQueryResponse {
   }[];
 }
 
-const MethodsContents = async (req: NextApiRequest, res: NextApiResponse) => {
+const MethodsTimers = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
-    const { id } = req.query;
     const session = await getSession({ req });
 
-    if (!session) {
-      return res.status(400).json({
-        error: 'Sua sessão está inativa, faça login novamente para continuar.'
-      });
+    const {
+      name,
+      description,
+      created_at
+    } = req.body;
+
+    const data = {
+      email: session?.user.email,
+      name,
+      description,
+      created_at
     }
 
-    try {
-      const {
-        title,
-        description,
-        date,
-        season
-      } = req.body;
+    await fauna.query(
+      q.Create(
+        q.Collection('timers'),
+        { data }
+      ),
+    );
 
-      const data = {
-        email: session?.user.email,
-        list_item_id: id,
-        title,
-        description,
-        date,
-        season
-      }
-
-      await fauna.query(
-        q.Create(
-          q.Collection('contents'),
-          { data }
-        ),
-      );
-
-      return res.status(201).json({ message: 'Item criado com sucesso.' });
-    } catch (err) {
-      return res.status(400).json({
-        error: 'Um erro inesperado aconteceu. Tente novamente mais tarde.'
-      });
-    }
+    return res.status(201).json({ message: 'Timer criado com sucesso.' });
   }
 
   if (req.method === 'GET') {
-    const { id } = req.query;
     const session = await getSession({ req });
 
     if (session) {
-      return await fauna.query<ContentsQueryResponse>(
+      return await fauna.query<TimersQueryResponse>(
         q.Map(
           q.Paginate(
-            q.Match(q.Index("contents_by_list_item_id"), id)
+            q.Match(q.Index("timers_by_email"), session?.user?.email)
           ),
           q.Lambda("X", q.Get(q.Var("X")))
         )
@@ -101,4 +82,4 @@ const MethodsContents = async (req: NextApiRequest, res: NextApiResponse) => {
   return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
 }
 
-export default MethodsContents;
+export default MethodsTimers;

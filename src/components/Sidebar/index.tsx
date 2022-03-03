@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Link from "next/link";
 import { toast } from "react-toastify";
 import { AiOutlineLogout, AiFillHome, AiFillFolderOpen } from 'react-icons/ai';
+import { GiSandsOfTime } from 'react-icons/gi';
 
 import { SidebarComponent } from "./styles";
 
@@ -35,6 +36,12 @@ export const Sidebar = () => {
       <Link href="/Lists">
         <a className="route">
           <AiFillFolderOpen />
+        </a>
+      </Link>
+
+      <Link href="/Timers">
+        <a className="route">
+          <GiSandsOfTime />
         </a>
       </Link>
 
