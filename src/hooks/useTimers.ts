@@ -10,7 +10,7 @@ type DataResponseTimer = {
   created_at: string;
 }
 
-type ListItem = {
+type Timer = {
   id: string;
   name: string;
   description: string;
@@ -18,12 +18,12 @@ type ListItem = {
   date_formatted: string;
 }
 
-type GetListItemsResponse = {
+type GetTimersResponse = {
   totalCount: number;
-  timers: ListItem[];
+  timers: Timer[];
 }
 
-export async function getTimersList(page: number): Promise<GetListItemsResponse> {
+export async function getTimersList(page: number): Promise<GetTimersResponse> {
   const { data, headers } = await api.get('/timers', {
     params: {
       page,
@@ -55,6 +55,6 @@ export async function getTimersList(page: number): Promise<GetListItemsResponse>
 
 export function useTimers(page: number) {
   return useQuery(['timers', page], () => getTimersList(page), {
-    staleTime: 1000 * 60 * 10, // 10 seconds
+    staleTime: 1000 * 60 * 10, // 10 min
   });
 }

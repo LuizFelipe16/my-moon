@@ -9,7 +9,7 @@ import {
   Text,
 } from '@chakra-ui/react';
 
-interface IWarningDeleteListItemProps {
+interface IWarningDeleteProps {
   isOpen: boolean;
   onClose: () => void;
   isLoading: boolean;
@@ -17,7 +17,7 @@ interface IWarningDeleteListItemProps {
   onDeleteItem: () => void;
 }
 
-export const ModalWarningDeleteListItem = ({ isOpen, onClose, onDeleteItem, isLoading = false }: IWarningDeleteListItemProps) => {
+export const ModalWarningDelete = ({ isOpen, onClose, onDeleteItem, isLoading = false }: IWarningDeleteProps) => {
   return (
     <>
       <Modal isCentered size="xl" isOpen={isOpen} onClose={onClose} >

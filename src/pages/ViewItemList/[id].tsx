@@ -1,25 +1,25 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { Flex, Heading, Button, HStack, useToast, Text, VStack, Image, Icon, useDisclosure } from '@chakra-ui/react';
+import { useMutation } from 'react-query';
 import { GetStaticPaths, GetStaticProps } from 'next';
 import { useSession } from 'next-auth/react';
 import Head from 'next/head';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FaArrowLeft, FaPlus, FaTrash } from 'react-icons/fa';
 
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
+import { ContentItem } from '../../components/ContentItem';
+import { ModalWarningDelete } from '../../components/Modal/WarningDelete';
+import { ModalAddContentItem } from '../../components/Modal/AddContentItem';
 
+import { useContents } from '../../hooks/useContents';
 import { api } from '../../services/api';
+import { queryClient } from '../../services/queryClient';
 
 import { Container } from "./styles";
-import Link from 'next/link';
-import { queryClient } from '../../services/queryClient';
-import { useMutation } from 'react-query';
-import { ModalWarningDeleteListItem } from '../../components/Modal/WarningDeleteListItem';
-import { useCallback } from 'react';
-import { ModalAddContentItem } from '../../components/Modal/AddContentItem';
-import { useContents } from '../../hooks/useContents';
-import { ContentItem } from '../../components/ContentItem';
+import axios from 'axios';
 
 interface IItem {
   name: string;
@@ -230,7 +230,7 @@ export default function ViewItemList({ item }: IViewItemListProps) {
         seasons={item.seasons_formatted}
       />
 
-      <ModalWarningDeleteListItem
+      <ModalWarningDelete
         isOpen={isOpen}
         onClose={onClose}
         isLoading={isLoadingWaitingDeleteItem}
@@ -250,8 +250,8 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const id = params?.id as string;
 
-  const response = await fetch(`http://localhost:3000/api/itemList/${id}`);
-  const data = await response.json();
+  const response = await axios.get(`http://localhost:3000/api/itemList/${id}`);
+  const data = await response.data;
 
   const item: IItem = data.item.data;
 

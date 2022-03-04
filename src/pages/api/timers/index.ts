@@ -66,11 +66,15 @@ const MethodsTimers = async (req: NextApiRequest, res: NextApiResponse) => {
           id: item.ref.id,
         }));
 
-        return res.status(200).json({
-          data: formattedData,
-        });
+        return res.status(200)
+          .setHeader('Content-Type', 'application/json')
+          .json({
+            data: formattedData,
+          });
       }).catch(err => {
-        return res.status(400).json(err);
+        return res.status(400)
+          .setHeader('Content-Type', 'application/json')
+          .json(err);
       });
     } else {
       return res.status(400).json({

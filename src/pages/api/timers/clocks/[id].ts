@@ -2,19 +2,20 @@ import { query as q } from 'faunadb';
 
 import { NextApiRequest, NextApiResponse } from "next";
 import { getSession } from "next-auth/react";
+import { format } from 'date-fns';
+import ptBR from 'date-fns/locale/pt-BR';
 
-import { fauna } from '../../../services/fauna';
+import { fauna } from '../../../../services/fauna';
 
-interface ContentsQueryResponse {
-  after?: {
-    id: string;
-  };
+interface ClocksQueryResponse {
   data: {
     data: {
       name: string;
       description: string;
       date: string;
-      season: string;
+      hours: number;
+      minutes: number;
+      time: number;
     };
     ts: number;
     ref: {
@@ -23,7 +24,7 @@ interface ContentsQueryResponse {
   }[];
 }
 
-const MethodsContents = async (req: NextApiRequest, res: NextApiResponse) => {
+const MethodsClocks = async (req: NextApiRequest, res: NextApiResponse) => {
   if (req.method === 'POST') {
     const { id } = req.query;
     const session = await getSession({ req });
@@ -39,26 +40,33 @@ const MethodsContents = async (req: NextApiRequest, res: NextApiResponse) => {
         title,
         description,
         date,
-        season
       } = req.body;
+
+      const [hours, minutes] = title.split(":");
+
+      const time = (Number(hours) * 60 * 60) + (Number(minutes) * 60);
 
       const data = {
         email: session?.user.email,
-        list_item_id: id,
+        timer_id: id,
         title,
         description,
         date,
-        season
+        hours: Number(hours),
+        minutes: Number(minutes),
+        time
       }
 
       await fauna.query(
         q.Create(
-          q.Collection('contents'),
+          q.Collection('clocks'),
           { data }
         ),
       );
 
-      return res.status(201).json({ message: 'Item criado com sucesso.' });
+      return res.status(201)
+        .setHeader('Content-Type', 'application/json')
+        .json({ message: 'Clock criado com sucesso.' });
     } catch (err) {
       return res.status(400).json({
         error: 'Um erro inesperado aconteceu. Tente novamente mais tarde.'
@@ -71,40 +79,39 @@ const MethodsContents = async (req: NextApiRequest, res: NextApiResponse) => {
     const session = await getSession({ req });
 
     if (session) {
-      return await fauna.query<ContentsQueryResponse>(
+      return await fauna.query<ClocksQueryResponse>(
         q.Map(
           q.Paginate(
-            q.Match(q.Index("contents_by_list_item_id"), id)
+            q.Match(q.Index("clocks_by_timer_id"), id)
           ),
           q.Lambda("X", q.Get(q.Var("X")))
         )
       ).then(response => {
         const formattedData = response.data.map(item => ({
           ...item.data,
+          date_formatted: format(
+            new Date(item.data.date),
+            "d 'de' MMM",
+            { locale: ptBR }
+          ),
           ts: item.ts,
           id: item.ref.id,
         }));
 
-        return res.status(200)
-          .setHeader('Content-Type', 'application/json')
-          .json({
-            data: formattedData,
-          });
+        return res.status(200).json({
+          data: formattedData,
+        });
       }).catch(err => {
-        return res.status(400)
-          .setHeader('Content-Type', 'application/json')
-          .json(err);
+        return res.status(400).json(err);
       });
     } else {
-      return res.status(400)
-        .setHeader('Content-Type', 'application/json')
-        .json({
-          error: "Faça Login novamente para continuar"
-        });
+      return res.status(400).json({
+        error: "Faça Login novamente para continuar"
+      });
     }
   }
 
   return res.status(405).json({ error: `Method '${req.method}' Not Allowed` });
 }
 
-export default MethodsContents;
+export default MethodsClocks;
