@@ -15,6 +15,8 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { api } from '../../services/api';
 import { Input } from '../Form/Input';
 import { ButtonCancel } from './ButtonCancel';
+import { useMutation } from 'react-query';
+import { queryClient } from '../../services/queryClient';
 
 interface IModalAddClockProps {
   isOpen: boolean;
@@ -48,19 +50,27 @@ export const ModalAddClock = ({ isOpen, onClose, id }: IModalAddClockProps) => {
 
   const errors = formState.errors;
 
+  const createClock = useMutation(async (clock: CreateClockFormData) => {
+    await api.post(`/timers/clocks/${id}`, {
+      ...clock,
+      title: clock.time
+    }).then((response) => {
+      toast({ title: response.data.message, status: "success", duration: 5000 });
+    });
+  }, {
+    onSuccess: () => {
+      queryClient.invalidateQueries(`clocks-timer-${id}`)
+      reset();
+    },
+  })
+
   const handleCreateClock: SubmitHandler<CreateClockFormData> = async (clock) => {
     if (!id) {
       toast({ title: 'Timer não encontrado. Tente novamente', status: 'info', duration: 5000 });
       return;
     }
 
-    await api.post(`/timers/clocks/${id}`, {
-      ...clock,
-      title: clock.time
-    }).then((response) => {
-      toast({ title: response.data.message, status: "success", duration: 5000 });
-      reset();
-    });
+    await createClock.mutateAsync(clock);
   }
 
   return (

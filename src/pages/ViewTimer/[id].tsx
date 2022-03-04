@@ -18,6 +18,8 @@ import { queryClient } from "../../services/queryClient";
 import { api } from "../../services/api";
 
 import { Container } from "./styles";
+import { ClockComponent } from "../../components/Clock";
+import { useClocks } from "../../hooks/useClocks";
 
 type Timer = {
   id: string;
@@ -46,13 +48,12 @@ export default function ViewTimer({ timer }: IViewTimerProps) {
   const { data: session } = useSession();
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data, isLoading } = useClocks(1, timer.id);
 
   const [isModalClockOpen, setIsModalClockOpen] = useState(false);
   const onCloseOrOpenModalClock = () => setIsModalClockOpen(!isModalClockOpen);
 
   const [isLoadingWaitingDeleteTimer, setIsLoadingWaitingDeleteTimer] = useState(false);
-
-  const [clocks, setClocks] = useState<Clock[]>([]);
 
   const deleteTimerQuery = useMutation(async () => {
     await api.delete(`/timers/timer/${timer.id}`).then((response) => {
@@ -72,18 +73,7 @@ export default function ViewTimer({ timer }: IViewTimerProps) {
     setIsLoadingWaitingDeleteTimer(false);
   }, []);
 
-  useEffect(() => {
-    api.get(`/timers/clocks/${timer.id}`)
-      .then(res => {
-        console.log(res.data.data)
-        setClocks(res.data.data);
-      })
-      .catch(err => {
-        toast({ title: 'Ocorreu um erro.', status: "success", duration: 5000 });
-      });
-  }, [timer.id]);
-
-  if (!session || !timer || !clocks) return <Loader />
+  if (!session || !timer || !!isLoading) return <Loader />
 
   return (
     <>
@@ -116,25 +106,7 @@ export default function ViewTimer({ timer }: IViewTimerProps) {
             align="flex-start"
             flexWrap="wrap"
           >
-            {clocks.map(clock => (
-              <Flex
-                key={clock.id}
-                w="13rem"
-                h="15rem"
-                bg="purple.400"
-                p="4"
-                pb="8"
-                borderRadius="2xl"
-                direction="column"
-                justify="space-between"
-              >
-                <Flex align="center">
-                  <Heading fontSize="8xl">{clock.hours}</Heading>
-                  <Text fontSize="5xl">/{clock.minutes}</Text>
-                </Flex>
-                <Text fontSize="2xl">{clock.date_formatted}</Text>
-              </Flex>
-            ))}
+            {data?.clocks.map(clock => <ClockComponent key={clock.id} clock={clock} />)}
           </HStack>
         </Flex>
       </Container>
