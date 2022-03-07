@@ -250,7 +250,7 @@ export const getStaticPaths: GetStaticPaths = async () => {
 export const getStaticProps: GetStaticProps = async ({ params }) => {
   const id = params?.id as string;
 
-  const response = await axios.get(`http://localhost:3000/api/itemList/${id}`);
+  const response = await axios.get(`${process.env.APP_URL}/api/itemList/${id}`);
   const data = await response.data;
 
   const item: IItem = data.item.data;

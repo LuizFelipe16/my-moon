@@ -19,7 +19,7 @@ export default NextAuth({
     },
 
     async redirect({ url, baseUrl }: any) {
-      return `http://localhost:3000/Dashboard`
+      return `${process.env.APP_URL}/Dashboard`
     },
 
     async signIn({ user, account, profile }) {
