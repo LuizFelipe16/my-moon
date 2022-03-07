@@ -5,7 +5,7 @@ type Clock = {
   id: string;
   title: string;
   description: string;
-  date: Date;
+  date: string;
   date_formatted: string;
   hours: number;
   minutes: number;

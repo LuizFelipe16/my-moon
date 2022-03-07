@@ -1,5 +1,6 @@
 import { Flex, Icon, Text } from "@chakra-ui/react";
 import Link from "next/link";
+import { memo } from 'react';
 import { GiSandsOfTime } from 'react-icons/gi';
 
 type TimerItem = {
@@ -13,7 +14,7 @@ interface ITimerItemComponentProps {
   timer: TimerItem;
 }
 
-function TimerItemComponent({ timer }: ITimerItemComponentProps) {
+function TimerItemComp({ timer }: ITimerItemComponentProps) {
   return (
     <Link href={`/ViewTimer/${timer.id}`} passHref>
       <Flex
@@ -43,4 +44,6 @@ function TimerItemComponent({ timer }: ITimerItemComponentProps) {
   );
 }
 
-export { TimerItemComponent };
+export const TimerItemComponent = memo(TimerItemComp, (prevProps, nextProps) => {
+  return Object.is(prevProps.timer, nextProps.timer);
+});

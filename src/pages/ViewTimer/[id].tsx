@@ -1,11 +1,11 @@
-import { useCallback, useState, useEffect } from "react";
+import { useCallback, useState } from "react";
 import { GetStaticPaths, GetStaticProps } from "next";
 import axios from "axios";
 import { useMutation } from "react-query";
 import { useSession } from "next-auth/react";
 import Head from "next/head";
 import { useRouter } from "next/router";
-import { Flex, Button, HStack, useToast, Text, Icon, useDisclosure, Box, Heading } from '@chakra-ui/react';
+import { Flex, Button, HStack, useToast, Icon, useDisclosure, Heading } from '@chakra-ui/react';
 import { FaPlus, FaTrash } from 'react-icons/fa';
 
 import { Loader } from "../../components/Loader";
@@ -13,30 +13,19 @@ import { Sidebar } from "../../components/Sidebar";
 import { HeaderView } from "../../components/layout/HeaderView";
 import { ModalWarningDelete } from "../../components/Modal/WarningDelete";
 import { ModalAddClock } from "../../components/Modal/AddClock";
+import { ClockComponent } from "../../components/Clock";
 
+import { useClocks } from "../../hooks/useClocks";
 import { queryClient } from "../../services/queryClient";
 import { api } from "../../services/api";
 
 import { Container } from "./styles";
-import { ClockComponent } from "../../components/Clock";
-import { useClocks } from "../../hooks/useClocks";
 
 type Timer = {
   id: string;
   name: string;
   description: string;
   created_at: string;
-}
-
-type Clock = {
-  id: string;
-  title: string;
-  description: string;
-  date: Date;
-  date_formatted: string;
-  hours: number;
-  minutes: number;
-  time: number;
 }
 
 interface IViewTimerProps {
@@ -62,7 +51,7 @@ export default function ViewTimer({ timer }: IViewTimerProps) {
   }, {
     onSuccess: () => {
       router.push('/Timers');
-      queryClient.invalidateQueries('timers')
+      queryClient.invalidateQueries('timers');
     },
     onError: () => { toast({ title: "Ocorreu um erro;", status: "error", duration: 5000 }) }
   });
@@ -99,6 +88,16 @@ export default function ViewTimer({ timer }: IViewTimerProps) {
             <Button onClick={onCloseOrOpenModalClock} colorScheme="purple"><Icon as={FaPlus} /></Button>
           </HStack>
 
+          <Heading
+            ml="9"
+            mt="2"
+            fontSize="lg"
+            fontWeight="300"
+            color="gray.500"
+          >
+            {timer.description}
+          </Heading>
+
           <HStack
             w="100%"
             h="100%"
@@ -106,7 +105,7 @@ export default function ViewTimer({ timer }: IViewTimerProps) {
             align="flex-start"
             flexWrap="wrap"
           >
-            {data?.clocks.map(clock => <ClockComponent key={clock.id} clock={clock} />)}
+            {data?.clocks.map(clock => <ClockComponent timer_id={timer.id} key={clock.id} clock={clock} />)}
           </HStack>
         </Flex>
       </Container>
