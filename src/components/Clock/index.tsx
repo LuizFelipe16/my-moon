@@ -102,6 +102,7 @@ function ClockComponent({ clock, timer_id }: IClockComponentProps) {
         onClose={modalEditClockOpenOrClose}
         disabled={false}
         clock={clock}
+        timer_id={timer_id}
       />
     </>
   );
