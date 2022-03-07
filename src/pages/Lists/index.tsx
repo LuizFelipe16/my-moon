@@ -9,7 +9,7 @@ import { ModalAddListItem } from '../../components/Modal/AddListItem';
 import { Sidebar } from '../../components/Sidebar';
 import { ItemList } from '../../components/ItemList';
 
-import { Container } from "./styles";
+import { Container } from "../../styles/pages/lists";
 
 export default function Lists() {
   const { isOpen, onOpen, onClose } = useDisclosure();

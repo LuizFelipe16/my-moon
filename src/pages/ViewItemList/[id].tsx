@@ -7,6 +7,7 @@ import Head from 'next/head';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
 import { FaArrowLeft, FaPlus, FaTrash } from 'react-icons/fa';
+import axios from 'axios';
 
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
@@ -18,8 +19,7 @@ import { useContents } from '../../hooks/useContents';
 import { api } from '../../services/api';
 import { queryClient } from '../../services/queryClient';
 
-import { Container } from "./styles";
-import axios from 'axios';
+import { Container } from "../../styles/pages/viewItemList";
 
 interface IItem {
   name: string;

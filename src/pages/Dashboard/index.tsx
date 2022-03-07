@@ -10,9 +10,10 @@ import { Sidebar } from '../../components/Sidebar';
 
 import { optionsChart } from '../../configs/Charts';
 
-import { Container } from "./styles";
 import { useItems } from '../../hooks/useItems';
 import { useTimers } from '../../hooks/useTimers';
+
+import { Container } from "../../styles/pages/dashboard";
 
 const Chart = dynamic(() => import('react-apexcharts'), {
   ssr: false,

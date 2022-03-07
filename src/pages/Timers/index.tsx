@@ -5,7 +5,7 @@ import Head from 'next/head';
 import { Loader } from '../../components/Loader';
 import { Sidebar } from '../../components/Sidebar';
 
-import { Container } from "./styles";
+import { Container } from "../../styles/pages/timers";
 import { ModalAddTimer } from '../../components/Modal/AddTimer';
 import { useTimers } from '../../hooks/useTimers';
 import { TimerItemComponent } from '../../components/TimerItem';

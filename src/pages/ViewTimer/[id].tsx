@@ -19,7 +19,7 @@ import { useClocks } from "../../hooks/useClocks";
 import { queryClient } from "../../services/queryClient";
 import { api } from "../../services/api";
 
-import { Container } from "./styles";
+import { Container } from "../../styles/pages/viewTimer";
 
 type Timer = {
   id: string;

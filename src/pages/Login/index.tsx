@@ -5,7 +5,7 @@ import { toast } from "react-toastify";
 import { Heading, VStack, Stack, Text, Button, Avatar } from "@chakra-ui/react";
 import { AiFillGithub } from 'react-icons/ai';
 
-import { Login as LoginStyled } from "./styles";
+import { Login as LoginStyled } from "../../styles/pages/login";
 
 export function Login() {
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
