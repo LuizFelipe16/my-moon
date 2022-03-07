@@ -7,7 +7,7 @@ import { AiFillGithub } from 'react-icons/ai';
 
 import { Login as LoginStyled } from "../../styles/pages/login";
 
-export function Login() {
+export default function Login() {
   const [isLoadingLogin, setIsLoadingLogin] = useState(false);
 
   function login(): void {
