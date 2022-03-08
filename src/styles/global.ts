@@ -17,7 +17,9 @@ export const GlobalStyle = createGlobalStyle`
     --purple-700: #553C9A;
     --purple-600: #6B46C1;
     --purple-500: #805AD5;
-
+    --purple-400: #9F7AEA;
+    --purple-300: #B794F4;
+    
     --toastify-icon-color-info: var(--gray-900);
     --toastify-text-color-info: var(--gray-900);
     --toastify-text-color-dark: var(--gray-900);
