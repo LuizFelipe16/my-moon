@@ -8,8 +8,11 @@ import { format } from 'date-fns';
 import ptBR from 'date-fns/locale/pt-BR';
 
 import { getPrismicClient } from '../../../services/prismic';
+
 import { Navigation } from '../../../components/layout/Navigation';
 import { Footer } from '../../../components/layout/Footer';
+
+import { PostStyled } from '../../../styles/pages/post';
 
 interface Post {
   last_publication_date: string | null;
@@ -51,29 +54,29 @@ export default function Post({ post, preview }: PostProps) {
     return null;
   }
 
-  // function Comments() {
-  //   return (
-  //     <section
-  //       style={{ width: '100%' }}
-  //       ref={
-  //         element => {
-  //           if (!element) {
-  //             return
-  //           }
+  function Comments() {
+    return (
+      <section
+        style={{ width: '100%' }}
+        ref={
+          element => {
+            if (!element) {
+              return
+            }
 
-  //           const scriptElement = document.createElement('script')
-  //           scriptElement.setAttribute('src', 'https://utteranc.es/client.js')
-  //           scriptElement.setAttribute('repo', 'LuizFelipe16/spaceblog-comments')
-  //           scriptElement.setAttribute('issue-term', 'pathname')
-  //           scriptElement.setAttribute('theme', 'photon-dark')
-  //           scriptElement.setAttribute('crossorigin', 'anonymous')
-  //           scriptElement.setAttribute('async', 'true')
-  //           element.replaceChildren(scriptElement)
-  //         }
-  //       }
-  //     />
-  //   );
-  // }
+            const scriptElement = document.createElement('script')
+            scriptElement.setAttribute('src', 'https://utteranc.es/client.js')
+            scriptElement.setAttribute('repo', 'LuizFelipe16/spaceblog-comments')
+            scriptElement.setAttribute('issue-term', 'pathname')
+            scriptElement.setAttribute('theme', 'photon-dark')
+            scriptElement.setAttribute('crossorigin', 'anonymous')
+            scriptElement.setAttribute('async', 'true')
+            element.replaceChildren(scriptElement)
+          }
+        }
+      />
+    );
+  }
 
   if (router.isFallback) {
     return <h1>Carregando...</h1>
@@ -82,7 +85,7 @@ export default function Post({ post, preview }: PostProps) {
   return (
     <>
       <Head><title>{post.data.title} | MyMoon</title></Head>
-      <main className="container main">
+      <PostStyled>
         <Navigation />
 
         <img className="banner" src={`${post.data.banner.url}`} alt="Banner" />
@@ -101,36 +104,25 @@ export default function Post({ post, preview }: PostProps) {
               <FiUser />
               <span>{post.data.author}</span>
             </div>
+            {
+              !!post.last_publication_date && (
+                <p className="last_publication_date">{post.last_publication_date}</p>
+              )
+            }
           </div>
-
-          {
-            !!post.last_publication_date && (
-              <p className="last_publication_date">
-                {format(
-                  new Date(post.last_publication_date),
-                  "'* editado em' d MMM yyyy', ás' KK':'mm",
-                  { locale: ptBR }
-                )}
-              </p>
-            )
-          }
 
           {post.data.content.map(content => {
             return (
               <div key={content.heading} className="content">
                 <h1>{content.heading}</h1>
-                {/* <div
-                  className={styles.postContent}
-                dangerouslySetInnerHTML={{ __html: content.body }}
-                /> */}
                 {content.body.map((element: any) => HtmlSerializer(element.type, element.text))}
               </div>
             )
           })}
         </article>
 
-        {/* {Comments()} */}
-      </main>
+        {Comments()}
+      </PostStyled>
       <Footer />
     </>
   );
@@ -166,7 +158,11 @@ export const getStaticProps: GetStaticProps = async ({ params, preview = false, 
 
   const post = {
     uid: response.uid,
-    last_publication_date: response?.last_publication_date,
+    last_publication_date: format(
+      new Date(response?.last_publication_date),
+      "'* editado em' d MMM yyyy', ás' KK':'mm",
+      { locale: ptBR }
+    ),
     first_publication_date: format(
       new Date(String(response.first_publication_date)),
       "d MMM yyyy",
