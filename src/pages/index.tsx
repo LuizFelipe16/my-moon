@@ -1,6 +1,9 @@
-import { Stack, Heading, Text, Button, Icon, HStack } from "@chakra-ui/react";
+import { Stack, Heading, Text, Button, Icon, HStack, Flex, VStack } from "@chakra-ui/react";
 import Head from "next/head";
-import { FaArrowRight, FaArrowUp } from 'react-icons/fa';
+import Link from "next/link";
+import { FaArrowRight } from 'react-icons/fa';
+import { HomeCard } from "../components/HomeCard";
+
 import { Footer } from "../components/layout/Footer";
 import { ScrollTopButton } from "../components/layout/ScrollTopButton";
 
@@ -13,9 +16,9 @@ export default function Home() {
       <HomeStyled>
         <HStack spacing="12" pl="20" w="100vw" h="13vh" position="absolute" top="0">
           <a className="nav_link">🌙 MyMoon</a>
-          <a className="nav_link">Home</a>
-          <a className="nav_link">Nosso Blog</a>
-          <a className="nav_link">Plataforma</a>
+          <Link href="/"><a className="nav_link">Home</a></Link>
+          <Link href="/Blog"><a className="nav_link">Nosso Blog</a></Link>
+          <Link href="/Login"><a className="nav_link">Plataforma</a></Link>
         </HStack>
         <div className="container_full_gray">
           <Stack spacing="5" direction="column" w="50%" justify="center" align="flex-start" pl="20">
@@ -31,21 +34,55 @@ export default function Home() {
               <br />
               ver suas atividades
             </Text>
-            <Button size="lg" p="7" colorScheme="purple" boxShadow="lg" borderRadius="full">
-              Conhecer MyMoon
-              <Button
-                ml="4"
-                background="purple.600"
-                color="purple.200"
-                _hover={{ color: 'purple.400', background: 'gray.50' }}
-              >
-                <Icon as={FaArrowRight} />
+            <Link href="/Login" passHref>
+              <Button size="lg" p="7" colorScheme="purple" boxShadow="lg" borderRadius="full">
+                Conhecer MyMoon
+                <Button
+                  ml="4"
+                  bg="purple.600"
+                  color="purple.200"
+                  _hover={{ color: 'purple.400', bg: 'gray.50' }}
+                >
+                  <Icon as={FaArrowRight} />
+                </Button>
               </Button>
-            </Button>
+            </Link>
           </Stack>
         </div>
         <ScrollTopButton />
       </HomeStyled>
+      <HStack
+        w="100vw"
+        h="100vh"
+        background="gray.300"
+        spacing="20"
+        align="center" justify="center"
+      >
+        <VStack spacing="16">
+          <HomeCard
+            src="/icons/clock.png"
+            title="Seu tempo"
+            text="Uma noite boa, é uma noite das melhores atividades que gosta."
+          />
+          <HomeCard
+            src="/icons/popcorn.png"
+            title="Pega a pipoca"
+            text="Com a lua é o melhor momento para ver as suas séries e filmes preferidos."
+          />
+        </VStack>
+        <VStack spacing="16">
+          <HomeCard
+            src="/icons/list.png"
+            title="Listas!"
+            text="Faça listas dos episódios preferidos, dos já assistidos, das séries ou vários outros."
+          />
+          <HomeCard
+            src="/icons/moon.png"
+            title="Sua Noite"
+            text="Ninguém vai poder interromper."
+          />
+        </VStack>
+      </HStack>
       <Footer />
     </>
   );
