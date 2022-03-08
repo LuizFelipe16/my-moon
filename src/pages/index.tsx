@@ -5,6 +5,7 @@ import { FaArrowRight } from 'react-icons/fa';
 import { HomeCard } from "../components/HomeCard";
 
 import { Footer } from "../components/layout/Footer";
+import { Navigation } from "../components/layout/Navigation";
 import { ScrollTopButton } from "../components/layout/ScrollTopButton";
 
 import { Home as HomeStyled } from '../styles/pages/home';
@@ -13,13 +14,8 @@ export default function Home() {
   return (
     <>
       <Head><title>Home | MyMoon</title></Head>
+      <Navigation />
       <HomeStyled>
-        <HStack spacing="12" pl="20" w="100vw" h="13vh" position="absolute" top="0">
-          <a className="nav_link">🌙 MyMoon</a>
-          <Link href="/"><a className="nav_link">Home</a></Link>
-          <Link href="/Blog"><a className="nav_link">Nosso Blog</a></Link>
-          <Link href="/Login"><a className="nav_link">Plataforma</a></Link>
-        </HStack>
         <div className="container_full_gray">
           <Stack spacing="5" direction="column" w="50%" justify="center" align="flex-start" pl="20">
             <Heading mt="12" textShadow="dark-lg" fontSize="5xl" fontWeight="extrabold">
