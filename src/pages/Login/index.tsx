@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { signIn } from 'next-auth/react';
+import Link from "next/link";
 import Head from "next/head";
 import { toast } from "react-toastify";
-import { Heading, VStack, Stack, Text, Button, Avatar } from "@chakra-ui/react";
+import { Heading, VStack, Stack, Text, Button, Avatar, Icon } from "@chakra-ui/react";
 import { AiFillGithub } from 'react-icons/ai';
+import { FaArrowLeft } from 'react-icons/fa';
 
 import { Login as LoginStyled } from "../../styles/pages/login";
 
@@ -13,7 +15,7 @@ export default function Login() {
   function login(): void {
     setIsLoadingLogin(true);
     signIn('github');
-    toast.info("Login feito com sucesso! Aguarde alguns instantes.", { icon: "🌙" });
+    toast.info("Aguarde alguns instantes.", { icon: "🌙" });
     setIsLoadingLogin(false);
     return;
   }
@@ -23,36 +25,36 @@ export default function Login() {
       <Head><title>Login | MyMoon</title></Head>
 
       <LoginStyled>
-        <div className="container_full_gray">
+        <div className="container">
           <Stack
-            w="25rem"
+            w="55%"
+            h="100%"
+
             direction="column"
             align="center"
             justify="center"
             spacing="10"
-            boxShadow="dark-lg"
 
             px="8"
             pt="12"
             pb="6"
             bg="gray.900"
-            borderRadius="lg"
           >
             <VStack>
               <Avatar
                 position="absolute"
-                top="2rem"
+                top="4rem"
                 size="lg"
                 src="/icon.png"
               />
-              <Heading color="purple.600" fontSize="7xl">MyMoon</Heading>
-              <Text color="purple.300" fontSize="md" opacity="0.6">
+              <Heading color="purple.600" fontSize="8xl">MyMoon</Heading>
+              <Text color="purple.300" fontSize="xl" opacity="0.6">
                 Faça Login na plataforma para continuar
               </Text>
             </VStack>
 
             <Button
-              w="100%"
+              w="24rem"
               h="2.9rem"
               gap="2"
 
@@ -80,6 +82,20 @@ export default function Login() {
           </Stack>
         </div>
       </LoginStyled>
+
+      <Link href="/" passHref>
+        <Button
+          position="fixed"
+          size="lg"
+          top="10"
+          left="10"
+          boxShadow="dark-lg"
+          borderRadius="full"
+          colorScheme="purple"
+        >
+          <Icon as={FaArrowLeft} />
+        </Button>
+      </Link>
     </>
   );
 }

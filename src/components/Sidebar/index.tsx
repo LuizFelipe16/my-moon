@@ -15,7 +15,7 @@ export const Sidebar = () => {
   async function logout(): Promise<void> {
     await signOut({ redirect: false });
     toast.info("Aguarde alguns instantes.", { icon: "🌙" });
-    router.push("/");
+    router.push("/Login");
   }
 
   return (

@@ -13,14 +13,12 @@ export const Login = styled.div`
   justify-content: center;
   align-items: center;
 
-  div.container_full_gray {
+  div.container {
     width: 100%;
     height: 100%;
 
-    background: #1A202CB3;
-
     display: flex;
-    justify-content: center;
+    justify-content: flex-end;
     align-items: center;
   }
 `;
