@@ -1,12 +1,14 @@
 import { VStack, Image, Text, Heading, Box, Button } from "@chakra-ui/react";
+import Link from "next/link";
 
 interface IPostCardProps {
   src: string;
   title: string;
   text: string;
+  href: string;
 }
 
-function PostCard({ src, text, title }: IPostCardProps) {
+function PostCard({ src, text, title, href }: IPostCardProps) {
   return (
     <VStack
       w="21rem"
@@ -35,7 +37,9 @@ function PostCard({ src, text, title }: IPostCardProps) {
       </Box>
       <Heading fontSize="2xl">{title}</Heading>
       <Text fontSize="lg" overflow="hidden" flex="1" w="100%">{text}</Text>
-      <Button w="100%" colorScheme="purple">Ver Completo</Button>
+      <Link href={href} passHref>
+        <Button w="100%" colorScheme="purple">Ver Completo</Button>
+      </Link>
     </VStack>
   );
 }
