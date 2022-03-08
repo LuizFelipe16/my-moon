@@ -86,7 +86,7 @@ export default function Post({ post, preview }: PostProps) {
     <>
       <Head><title>{post.data.title} | MyMoon</title></Head>
       <PostStyled>
-        <Navigation />
+        <Navigation bg="gray.900" />
 
         <img className="banner" src={`${post.data.banner.url}`} alt="Banner" />
 

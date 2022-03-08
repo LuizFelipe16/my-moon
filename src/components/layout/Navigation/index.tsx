@@ -3,9 +3,13 @@ import Link from "next/link";
 
 import { Alink } from "./styles";
 
-function Navigation() {
+interface INavigationProps {
+  bg?: string;
+}
+
+function Navigation({ bg }: INavigationProps) {
   return (
-    <HStack spacing="12" pl="20" w="100vw" h="13vh" position="absolute" top="0">
+    <HStack bg={bg} spacing="12" pl="20" w="100vw" h="13vh" position="absolute" top="0">
       <Alink>🌙 MyMoon</Alink>
       <Link href="/"><Alink className="nav_link">Home</Alink></Link>
       <Link href="/Blog"><Alink className="nav_link">Nosso Blog</Alink></Link>
